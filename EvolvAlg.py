@@ -1,4 +1,6 @@
 import sys
+import GeneticAlgorithm.GeneticAlgorithm as GA
+import PBIL.PBIL as PB
 
 class EvolvAlg:
     def __init__(self, fileName, popSize, selMethod, crossMethod, crossProb, mutProb, numGen,alg):
@@ -30,6 +32,13 @@ class EvolvAlg:
 
     def run():
         readFile(self.fileName)
+        if(alg == "g"):
+            ga = GA()
+            ga.solve()
+        else:
+            pb = PB()
+            pb.solve()
+
 
 
 #Run Program

@@ -1,6 +1,7 @@
 import sys
 import GeneticAlgorithm.GeneticAlgorithm as GA
 import PBIL.PBIL as PB
+import FitnessEvaluator.FitnessEvaluator as FE
 
 class EvolvAlg:
     def __init__(self, fileName, popSize, selMethod, crossMethod, crossProb, mutProb, numGen,alg):

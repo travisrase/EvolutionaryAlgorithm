@@ -1,8 +1,6 @@
 import sys
 
-
 class EvolvAlg:
-
     def __init__(self, fileName, popSize, selMethod, crossMethod, crossProb, mutProb, numGen,alg):
         self.fileName = fileName
         self.popSize = popSize

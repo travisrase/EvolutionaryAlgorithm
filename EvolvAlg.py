@@ -1,7 +1,7 @@
 import sys
-import GeneticAlgorithm.GeneticAlgorithm as GA
-import PBIL.PBIL as PB
-import FitnessEvaluator.FitnessEvaluator as FE
+from GeneticAlgorithm import GeneticAlgorithm  as GA
+from PBIL_python import PBIL as PB
+import FitnessEvaluator as FE
 
 class EvolvAlg:
     def __init__(self, fileName, popSize, selMethod, crossMethod, crossProb, mutProb, numGen,alg):
@@ -31,26 +31,33 @@ class EvolvAlg:
             except:
                 continue
 
-    def run():
-        readFile(self.fileName)
-        if(alg == "g"):
-            ga = GA()
+    def run(self):
+        self.readFile(self.fileName)
+        print("self.alg: ", self.alg)
+        if(self.alg == "g"):
+            ga = GA(self.problem, self.popSize, self.selMethod, self.crossMethod, self.crossProb, self.mutProb, self.numGen)
             ga.solve()
         else:
-            pb = PB()
+            pb = PB(self.problem, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
             pb.solve()
 
-
-
 #Run Program
-fileName = sys.argv[0]
-popSize = sys.argv[1]
-selMethod = sys.argv[2]
-crossMethod = sys.argv[3]
-crossProb = sys.argv[4]
-mutProb = sys.argv[5]
-numGen = sys.argv[6]
-alg = sys.argv[7]
+fileName = sys.argv[1]
+popSize = sys.argv[2]
+selMethod = sys.argv[3]
+crossMethod = sys.argv[4]
+crossProb = sys.argv[5]
+mutProb = sys.argv[6]
+numGen = sys.argv[7]
+alg = sys.argv[8]
+print("fileName: ", fileName)
+print("popSize: ", popSize)
+print("selMethod: ", selMethod)
+print("crossMethod: ", crossMethod)
+print("crossProb: ", crossProb)
+print("mutProb: ", mutProb)
+print("numGen: ", numGen)
+print("alg: ", alg)
 
 eA = EvolvAlg(fileName,popSize,selMethod,crossMethod, crossProb,mutProb,numGen,alg)
 eA.run()

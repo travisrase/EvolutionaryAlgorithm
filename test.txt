@@ -1,6 +1,6 @@
-c strEdges: 189  randomEdges: 441 
-c degrees:  2  3 
-c girth: 10 max: 8.032766  
+c strEdges: 189  randomEdges: 441
+c degrees:  2  3
+c girth: 10 max: 8.032766
 c Hgirth mixed MAXCUT instance
 c generated from an undirected graph
 c to solve unweighted MaxCut

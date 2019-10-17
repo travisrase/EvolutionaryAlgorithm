@@ -81,7 +81,7 @@ class GeneticAlgorithm:
 
     def buildProbabilityTable(self):
         table = []
-        for i in range (self.numIndividuals):
+        for i in range (1,self.numIndividuals+1):
             table += [i]*(self.numIndividuals - i)
         return table
 

@@ -2,8 +2,9 @@ from FitnessEvaluator import FitnessEvaluator as FA
 import random
 
 class PBIL:
-    def __init__(self, problem, popSize, learn, negLearn, mutProb, mutShift, numIterations):
+    def __init__(self, problem, numVariables, popSize, learn, negLearn, mutProb, mutShift, numIterations,):
         self.fitnessEvaluator = FA(problem)
+        self.numVariables = int(numVariables)
         self.numIterations = int(numIterations)
         self.learn = float(learn)
         self.negLearn = float(negLearn)
@@ -13,9 +14,11 @@ class PBIL:
 
     def genSampleVector(self, probabilities):
         sample = []
-        for i in range(self.popSize):
+        for i in range(self.numVariables + 1):
             val = random.random()
-            if(val > probabilities[i]):
+            if i == 0:
+                sample += [0]
+            elif(val > probabilities[i]):
                 sample += [1]
             else:
                 sample += [0]
@@ -58,7 +61,7 @@ class PBIL:
 
     def solve(self):
         probability = []
-        for i in range(self.popSize):
+        for i in range(self.numVariables + 1):
             probability += [0.5]
 
         for i in range(self.popSize):
@@ -88,16 +91,16 @@ class PBIL:
             # print()
 
             #Update the probability vector towards the best solution
-            for v in range(self.popSize):
+            for v in range(self.numVariables + 1):
                 probability[v] = probability[v] * (1.0 - self.learn) + bestVector[v] * (self.learn)
 
             """Update the probability vector away from the worst solution"""
-            for v in range(self.popSize):
+            for v in range(self.numVariables + 1):
                 probability[v] = probability[v] * (1.0 - self.negLearn)
                 + bestVector[v] * (self.negLearn)
 
             """Mutate probability vector"""
-            for v in range(self.popSize):
+            for v in range(self.numVariables + 1):
                 if random.random() < self.mutProb:
                     mutateDirection = 0
                     if random.random() > 0.5:

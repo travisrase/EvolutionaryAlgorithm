@@ -47,7 +47,7 @@ class EvolvAlg:
             solution = ga.solve()
             print(solution)
         else:
-            pb = PB(self.problem, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
+            pb = PB(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
             pb.solve()
 
 #Run Program

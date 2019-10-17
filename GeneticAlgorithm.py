@@ -14,10 +14,12 @@ class GeneticAlgorithm:
         self.numGens = int(numGens)
         self.FA = FA(problem)
         self.rsProbabilityTable = self.buildProbabilityTable()
+        self.solutionFound = False
 
     def solve(self):
         #build initial population randomly
         population = self.buildRandomPop()
+        currentIteration = 1
         #run a selection, breeding and mutation algorithm for numGens iterations
         for i in range(self.numGens):
             #first select breeding pool from population
@@ -26,18 +28,23 @@ class GeneticAlgorithm:
             newPopulation = self.breedNewPop(breedingPool)
             #mutate new population
             population = self.mutatePop(newPopulation)
+            if (self.solutionFound):
+                break
+            elif(i < self.numGens-1):
+                currentIteration += 1
+
         profileTuples = self.buildProfileTuples(population)
         sortedProfileTuples = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
         indexBestSolution = sortedProfileTuples[0][0]
         bestSolution = population[indexBestSolution]
         fitnessRating = sortedProfileTuples[0][1]
-        return (fitnessRating, bestSolution)
+        return (fitnessRating, currentIteration, bestSolution)
 
     #function that will randomly create a population of self.numIndividiuals
     def buildRandomPop(self):
         pop = []
         for i in range(self.numIndividuals):
-            sol = self.buildRandomSolution(self.numVars + 1)
+            sol = self.buildRandomSolution()
             pop += [sol]
         return pop
 
@@ -45,9 +52,12 @@ class GeneticAlgorithm:
     #for selection: rank sort, tournmanet selection, selection by groups
     def selectBreedingPool(self,pop):
         profileTuples = self.buildProfileTuples(pop)
+        sortedProfileTuples = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
+        if (sortedProfileTuples[0][1] == 1.0):
+            self.solutionFound = True
         #use rank sort seclection method
         if(self.selMethod == "rs"):
-            breedingPoolIndicies = self.rs(profileTuples)
+            breedingPoolIndicies = self.rs(sortedProfileTuples)
             breedingPool = [pop[i] for i in breedingPoolIndicies]
             return breedingPool
         elif(self.selMethod == "ts"):
@@ -57,8 +67,7 @@ class GeneticAlgorithm:
         breedingPool = [pop[i] for i in breedingPoolIndicies]
         return breedingPool
 
-    def rs(self, profileTuples):
-        sortedProfileTuples = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
+    def rs(self, sortedProfileTuples):
         rankedIndicies = [index[0] for index in sortedProfileTuples]
         selectedIndicies = []
         for i in range(self.numIndividuals):
@@ -72,8 +81,8 @@ class GeneticAlgorithm:
 
     def buildProbabilityTable(self):
         table = []
-        for i in range (self.numVars):
-            table += [i]*(self.numVars - i)
+        for i in range (self.numIndividuals):
+            table += [i]*(self.numIndividuals - i)
         return table
 
     def ts(self, profileTuples, n, m):
@@ -168,9 +177,9 @@ class GeneticAlgorithm:
                 newSol += [i]
         return newSol
 
-    def buildRandomSolution(self,numVars):
+    def buildRandomSolution(self):
         sol = []
-        for i in range(numVars):
+        for i in range(self.numVars+1):
             sol += [self.getIndexValue(.5)]
         return sol
 

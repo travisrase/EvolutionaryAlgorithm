@@ -13,6 +13,7 @@ class GeneticAlgorithm:
         self.mutProb = float(mutProb)
         self.numGens = int(numGens)
         self.FA = FA(problem)
+        self.rsProbabilityTable = self.buildProbabilityTable()
 
     def solve(self):
         #build initial population randomly
@@ -56,11 +57,24 @@ class GeneticAlgorithm:
         breedingPool = [pop[i] for i in breedingPoolIndicies]
         return breedingPool
 
-    """ incomplete """
     def rs(self, profileTuples):
-        sorted_by_second = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
-        res = [index[0] for index in sorted_by_second]
-        return res
+        sortedProfileTuples = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
+        rankedIndicies = [index[0] for index in sortedProfileTuples]
+        selectedIndicies = []
+        for i in range(self.numIndividuals):
+            rank = self.generateRSIndex()
+            selectedIndicies += [rankedIndicies[rank]]
+        return selectedIndicies
+
+    def generateRSIndex(self):
+        r = random.randrange(0,len(self.rsProbabilityTable))
+        return self.rsProbabilityTable[r]
+
+    def buildProbabilityTable(self):
+        table = []
+        for i in range (self.numVars):
+            table += [i]*(self.numVars - i)
+        return table
 
     def ts(self, profileTuples, n, m):
         indicies = []

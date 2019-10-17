@@ -73,6 +73,7 @@ class PBIL:
                 sampleVectors += [val]
                 eval = self.evaluateSolutions(val)
                 if eval == 1.0:
+                    print("yahtzee", bestVector, "numIt: ", v + 1)
                     return val
                 evaluations += [eval]
 
@@ -80,9 +81,9 @@ class PBIL:
             bestVector = bestWorstVectors[0]
             worstVector = bestWorstVectors[1]
 
-            if self.evaluateSolutions(bestVector) == 1.0:
-                print("yahtzee", bestVector)
-                return bestVector
+            # if self.evaluateSolutions(bestVector) == 1.0:
+            #     print("yahtzee", bestVector)
+            #     return bestVector
             #bestVector = self.getBestVector(sampleVectors, evaluations)[0]
             # print("---------")
             # print("i good: ", self.evaluateSolutions(bestVector))
@@ -96,8 +97,9 @@ class PBIL:
 
             """Update the probability vector away from the worst solution"""
             for v in range(self.numVariables + 1):
-                probability[v] = probability[v] * (1.0 - self.negLearn)
-                + bestVector[v] * (self.negLearn)
+                if (bestVector[v] != worstVector[v]):
+                    probability[v] = probability[v] * (1.0 - self.negLearn)
+                    + bestVector[v] * (self.negLearn)
 
             """Mutate probability vector"""
             for v in range(self.numVariables + 1):

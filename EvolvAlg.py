@@ -50,7 +50,7 @@ class EvolvAlg:
             pb = PB(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
             solution = pb.solve()
         print("Filename: " + self.fileName)
-        print("Number of Variables: " + str(solution["numVariables"]) + ", Number of clauses: " + str(solution["numClauses"]))
+        print("Number of Variables: " + str(self.numVariables) + ", Number of clauses: " + str(solution["numClauses"]))
         print("Number of true clauses: " + str(solution["trueClauses"]) + ", Percent true clauses: " + str(solution["percentage"]))
         print("Variable assignment: " + str(solution["solution"]))
         print("Number of iterations needed: " + str(solution["iteration"]))

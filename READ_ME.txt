@@ -16,7 +16,7 @@ test metrics.
 
 INSTRUCTIONS:
 From the command line, our program can be run by typing 
-"Python3 EvolvAlg.py [test_name.cnf] [numBits] [selMethod/learn_rate] 
+"Python3 EvolvAlg.py [testName.cnf] [numBits] [selMethod/learnRate] 
 [crossMethod/negLearn] [crossProb/mutProb] [mutProb/mutShift] [g/p]"
 The elements within brackets within quotes are different parameters by
 which the person running the program can manipulate the algorithm. The

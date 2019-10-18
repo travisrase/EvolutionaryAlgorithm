@@ -1,7 +1,10 @@
 class FitnessEvaluator:
     def __init__(self, clauses):
         self.clauses = clauses
-        self.numCluases = len(clauses)
+        self.numClauses = len(clauses)
+
+    def getNumClauses(self):
+        return self.numClauses
 
     def evaluateSolution(self,solution):
         numTrueClauses = 0;
@@ -19,4 +22,4 @@ class FitnessEvaluator:
                 # if clause is true increment number of true clauses found
                 numTrueClauses += 1
         #return percentage of correct clauses
-        return (numTrueClauses)/(self.numCluases)
+        return (numTrueClauses)/(self.numClauses)

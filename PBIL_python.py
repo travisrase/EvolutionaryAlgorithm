@@ -11,54 +11,11 @@ class PBIL:
         self.popSize = int(popSize)
         self.mutProb = float(mutProb)
         self.mutShift = float(mutShift)
+        self.problem = str(problem)
 
-    def genSampleVector(self, probabilities):
-        sample = []
-        for i in range(self.numVariables + 1):
-            val = random.random()
-            if i == 0:
-                sample += [0]
-            elif(val > probabilities[i]):
-                sample += [1]
-            else:
-                sample += [0]
-        return sample
-
-    def evaluateSolutions(self, sample):
-        return self.fitnessEvaluator.evaluateSolution(sample)
-
-    def getBestWorstVectors (self, sampleVectors, evaluations):
-        maxIndex = 0
-        max = 0.0
-        low = 0.0
-        lowIndex = 0
-        for i in range(len(evaluations)):
-            if evaluations[i] > max:
-                max = evaluations[i]
-                maxIndex = i
-            if evaluations[i] < low:
-                low = evaluations[i]
-                lowIndex = i
-        return (sampleVectors[maxIndex], sampleVectors[lowIndex])
-
-    # def getBestVector(self, sampleVectors, evaluations):
-    #     maxIndex = 0
-    #     max = 0.0
-    #     for i in range(len(evaluations)):
-    #         if evaluations[i] > max:
-    #             max = evaluations[i]
-    #             maxIndex = i
-    #     return sampleVectors[maxIndex]
-    #
-    # def getWorstVector(self, sampleVectors, evaluations):
-    #     lowIndex = 0
-    #     low = 0.0
-    #     for i in range(len(evaluations)):
-    #         if evaluations[i] < low:
-    #             low = evaluations[i]
-    #             lowIndex = i
-    #     return sampleVectors[lowIndex]
-
+    #This method is used to solve the given MAXSAT problem calling on various
+    #helper methods to get that task done. Returns a dictionary used for final
+    #output in EvolvAlg.
     def solve(self):
         probability = []
         for i in range(self.numVariables + 1):
@@ -73,23 +30,13 @@ class PBIL:
                 sampleVectors += [val]
                 eval = self.evaluateSolutions(val)
                 if eval == 1.0:
-                    print("yahtzee", bestVector, "numIt: ", v + 1)
-                    return val
+                    # print("yahtzee", bestVector, "numIt: ", v + 1)
+                    return self.formatSolution(val, eval, (v + 1))
                 evaluations += [eval]
 
             bestWorstVectors = self.getBestWorstVectors(sampleVectors, evaluations)
             bestVector = bestWorstVectors[0]
             worstVector = bestWorstVectors[1]
-
-            # if self.evaluateSolutions(bestVector) == 1.0:
-            #     print("yahtzee", bestVector)
-            #     return bestVector
-            #bestVector = self.getBestVector(sampleVectors, evaluations)[0]
-            # print("---------")
-            # print("i good: ", self.evaluateSolutions(bestVector))
-            # #worstVector = self.getWorstVector(sampleVectors, evaluations)
-            # print("i bad: ", self.evaluateSolutions(worstVector))
-            # print()
 
             #Update the probability vector towards the best solution
             for v in range(self.numVariables + 1):
@@ -109,5 +56,52 @@ class PBIL:
                         mutateDirection = 1
                         probability[v] = probability[v] * (1.0 - self.mutShift)
                         + mutateDirection * (self.mutShift)
-        print(":(", bestVector, self.evaluateSolutions(bestVector))
-        return bestVector
+        #print(":(", bestVector, self.evaluateSolutions(bestVector))
+        return self.formatSolution(bestVector, self.evaluateSolutions(bestVector),
+                                    self.numIterations)
+
+    #This method generates a sample vector based on the various elements of the
+    #probability vector parameter.
+    def genSampleVector(self, probabilities):
+        sample = []
+        for i in range(self.numVariables + 1):
+            val = random.random()
+            if i == 0:
+                sample += [0]
+            elif(val > probabilities[i]):
+                sample += [1]
+            else:
+                sample += [0]
+        return sample
+
+    def evaluateSolutions(self, sample):
+        return self.fitnessEvaluator.evaluateSolution(sample)
+
+    #Given a list of sample vectors and a list of evaluations, this method
+    #returns a tuple of the index of the best and worst vectors.
+    def getBestWorstVectors (self, sampleVectors, evaluations):
+        maxIndex = 0
+        max = 0.0
+        low = 0.0
+        lowIndex = 0
+        for i in range(len(evaluations)):
+            if evaluations[i] > max:
+                max = evaluations[i]
+                maxIndex = i
+            if evaluations[i] < low:
+                low = evaluations[i]
+                lowIndex = i
+        return (sampleVectors[maxIndex], sampleVectors[lowIndex])
+
+    #formats and returns a dictionary to be sent to EvolvAlg for final output
+    def formatSolution(self, solution, evaluation, iteration):
+        solutionDict = {}
+        #solutionDict["file"] = self.problem
+        solutionDict["numVariables"] = self.numVariables
+        numClauses = self.fitnessEvaluator.getNumClauses()
+        solutionDict["numClauses"] = numClauses
+        solutionDict["percentage"] = evaluation
+        solutionDict["trueClauses"] = int(numClauses * evaluation)
+        solutionDict["solution"] = solution
+        solutionDict["iteration"] = iteration
+        return solutionDict

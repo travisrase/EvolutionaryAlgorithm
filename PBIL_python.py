@@ -21,16 +21,15 @@ class PBIL:
         for i in range(self.numVariables + 1):
             probability += [0.5]
 
-        for i in range(self.popSize):
+        for i in range(self.numIterations):
             sampleVectors = []
             evaluations = []
             #Generate sample vectors
-            for v in range(self.numIterations):
+            for v in range(self.popSize):
                 val = self.genSampleVector(probability)
                 sampleVectors += [val]
                 eval = self.evaluateSolutions(val)
                 if eval == 1.0:
-                    # print("yahtzee", bestVector, "numIt: ", v + 1)
                     return self.formatSolution(val, eval, (v + 1))
                 evaluations += [eval]
 
@@ -42,13 +41,13 @@ class PBIL:
             for v in range(self.numVariables + 1):
                 probability[v] = probability[v] * (1.0 - self.learn) + bestVector[v] * (self.learn)
 
-            """Update the probability vector away from the worst solution"""
+            #Update the probability vector away from the worst solution
             for v in range(self.numVariables + 1):
                 if (bestVector[v] != worstVector[v]):
                     probability[v] = probability[v] * (1.0 - self.negLearn)
                     + bestVector[v] * (self.negLearn)
 
-            """Mutate probability vector"""
+            #Mutate probability vector
             for v in range(self.numVariables + 1):
                 if random.random() < self.mutProb:
                     mutateDirection = 0
@@ -56,7 +55,6 @@ class PBIL:
                         mutateDirection = 1
                         probability[v] = probability[v] * (1.0 - self.mutShift)
                         + mutateDirection * (self.mutShift)
-        #print(":(", bestVector, self.evaluateSolutions(bestVector))
         return self.formatSolution(bestVector, self.evaluateSolutions(bestVector),
                                     self.numIterations)
 
@@ -97,10 +95,10 @@ class PBIL:
     def formatSolution(self, solution, evaluation, iteration):
         solutionDict = {}
         #solutionDict["file"] = self.problem
-        solutionDict["numVariables"] = self.numVariables
+        #solutionDict["numVariables"] = self.numVariables
         numClauses = self.fitnessEvaluator.getNumClauses()
         solutionDict["numClauses"] = numClauses
-        solutionDict["percentage"] = evaluation
+        solutionDict["percentage"] = (evaluation * 100)
         solutionDict["trueClauses"] = int(numClauses * evaluation)
         solutionDict["solution"] = solution
         solutionDict["iteration"] = iteration

@@ -23,6 +23,9 @@ class GeneticAlgorithm:
         for i in range(self.numGens):
             #first select breeding pool from population
             breedingPool = self.selectBreedingPool(population)
+            #check to see if solution has been found
+            if breedingPool[0] == -1:
+                break
             #breed new population from breedingPool
             newPopulation = self.breedNewPop(breedingPool)
             #mutate new population
@@ -54,6 +57,7 @@ class GeneticAlgorithm:
         sortedProfileTuples = sorted(profileTuples, key=lambda tup: tup[1], reverse=True)
         if (sortedProfileTuples[0][1] == 1.0):
             self.solutionFound = True
+            return [-1]
         #use rank sort seclection method
         if(self.selMethod == "rs"):
             breedingPoolIndicies = self.rs(sortedProfileTuples)

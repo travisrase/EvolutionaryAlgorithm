@@ -3,7 +3,6 @@ from FitnessEvaluator import FitnessEvaluator  as FA
 
 class GeneticAlgorithm:
     def __init__(self, problem, numVars, numIndividuals, selMethod, crossMethod, crossProb, mutProb, numGens):
-        self.problem = problem
         self.numVars = numVars
         self.lenProblem = len(problem)
         self.numIndividuals = int(numIndividuals)
@@ -38,7 +37,7 @@ class GeneticAlgorithm:
         indexBestSolution = sortedProfileTuples[0][0]
         bestSolution = population[indexBestSolution]
         fitnessRating = sortedProfileTuples[0][1]
-        return (fitnessRating, currentIteration, bestSolution)
+        return self.formatSolution(bestSolution, fitnessRating, currentIteration)
 
     #function that will randomly create a population of self.numIndividiuals
     def buildRandomPop(self):
@@ -196,3 +195,14 @@ class GeneticAlgorithm:
         for i in range(len(fitnessRatings)):
             profileTuples += [(i,fitnessRatings[i])]
         return profileTuples
+
+    #formats and returns a dictionary to be sent to EvolvAlg for final output
+    def formatSolution(self, solution, evaluation, iteration):
+        solutionDict = {}
+        numClauses = self.FA.getNumClauses()
+        solutionDict["numClauses"] = numClauses
+        solutionDict["percentage"] = evaluation
+        solutionDict["trueClauses"] = int(numClauses * evaluation)
+        solutionDict["solution"] = solution
+        solutionDict["iteration"] = iteration
+        return solutionDict

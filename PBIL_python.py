@@ -2,35 +2,36 @@ from FitnessEvaluator import FitnessEvaluator as FA
 import random
 
 class PBIL:
-    def __init__(self, problem, numVariables, popSize, learn, negLearn, mutProb, mutShift, numIterations,):
+    def __init__(self, problem, numVariables, popSize, learn, negLearn, mutProb, mutShift, numGenerations):
         self.fitnessEvaluator = FA(problem)
         self.numVariables = int(numVariables)
-        self.numIterations = int(numIterations)
+        self.numGens = int(numGenerations)
         self.learn = float(learn)
         self.negLearn = float(negLearn)
         self.popSize = int(popSize)
         self.mutProb = float(mutProb)
         self.mutShift = float(mutShift)
-        self.problem = str(problem)
 
     #This method is used to solve the given MAXSAT problem calling on various
     #helper methods to get that task done. Returns a dictionary used for final
     #output in EvolvAlg.
     def solve(self):
         probability = []
+        #start population vector with all .5
         for i in range(self.numVariables + 1):
             probability += [0.5]
 
-        for i in range(self.popSize):
+        #run numIterations iterations of the algorithm
+        for i in range(self.numGens):
             sampleVectors = []
             evaluations = []
             #Generate sample vectors
-            for v in range(self.numIterations):
-                val = self.genSampleVector(probability)
-                sampleVectors += [val]
-                eval = self.evaluateSolutions(val)
+            for v in range(self.popSize):
+                sVector = self.genSampleVector(probability)
+                sampleVectors += [sVector]
+                eval = self.evaluateSolutions(sVector)
                 if eval == 1.0:
-                    return self.formatSolution(val, eval, (v + 1))
+                    return self.formatSolution(sVector, eval, (v + 1))
                 evaluations += [eval]
 
             bestWorstVectors = self.getBestWorstVectors(sampleVectors, evaluations)
@@ -56,7 +57,7 @@ class PBIL:
                         probability[v] = probability[v] * (1.0 - self.mutShift)
                         + mutateDirection * (self.mutShift)
         return self.formatSolution(bestVector, self.evaluateSolutions(bestVector),
-                                    self.numIterations)
+                                    self.numGens)
 
     #This method generates a sample vector based on the various elements of the
     #probability vector parameter.
@@ -66,7 +67,7 @@ class PBIL:
             val = random.random()
             if i == 0:
                 sample += [0]
-            elif(val > probabilities[i]):
+            elif(val  > probabilities[i]):
                 sample += [1]
             else:
                 sample += [0]

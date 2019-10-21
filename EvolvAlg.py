@@ -40,20 +40,24 @@ class EvolvAlg:
                 except:
                     continue
 
-    def run(self):
-        self.readFile(self.fileName)
-        if(self.alg == "g"):
-            ga = GA(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb, self.mutProb, self.numGen)
-            solution = ga.solve()
-            #print(solution)
-        else:
-            pb = PB(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
-            solution = pb.solve()
+    def printOutput(self,solution):
         print("Filename: " + self.fileName)
         print("Number of Variables: " + str(self.numVariables) + ", Number of clauses: " + str(solution["numClauses"]))
         print("Number of true clauses: " + str(solution["trueClauses"]) + ", Percent true clauses: " + str(solution["percentage"]))
         print("Variable assignment: " + str(solution["solution"]))
         print("Number of iterations needed: " + str(solution["iteration"]))
+
+
+    def run(self):
+        self.readFile(self.fileName)
+        if(self.alg == "g"):
+            ga = GA(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb, self.mutProb, self.numGen)
+            solution = ga.solve()
+            self.printOutput(solution)
+        else:
+            pb = PB(self.problem, self.numVariables, self.popSize, self.selMethod, self.crossMethod, self.crossProb ,self.mutProb, self.numGen)
+            solution = pb.solve()
+            self.printOutput(solution)
 
 #Run Program
 fileName = sys.argv[1]

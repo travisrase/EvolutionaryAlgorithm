@@ -70,6 +70,9 @@ class GeneticAlgorithm:
         breedingPool = [pop[i] for i in breedingPoolIndicies]
         return breedingPool
 
+    #this method given an input of sorted profile tuples will return an array
+    #of length popSize of integer indicis of solutions. This method chooses a solution
+    # of rank i with probability 1/(sum(k) k: 0->i)
     def rs(self, sortedProfileTuples):
         rankedIndicies = [index[0] for index in sortedProfileTuples]
         selectedIndicies = []
@@ -78,16 +81,24 @@ class GeneticAlgorithm:
             selectedIndicies += [rankedIndicies[rank]]
         return selectedIndicies
 
+    #this method uses a proabability table to generate i with probability 1/(sum(k) k: 0->i)
     def generateRSIndex(self):
         r = random.randrange(0,len(self.rsProbabilityTable))
         return self.rsProbabilityTable[r]
 
+    #this method builds a probability table used to geenrate rs indicis.
+    #the table has more indicies assigned to numbers of higher rank. More specfically
+    #for each index i there are numIndividuals - i indicies in the array assigned to
+    #i
     def buildProbabilityTable(self):
         table = []
         for i in range (1,self.numIndividuals+1):
             table += [i]*(self.numIndividuals - i)
         return table
 
+    #this method implements tournament selection in which m random solutions are chosen
+    #and the best n are added to the breeding pool. This process is repeated until
+    #popSize solutions have been chosen.
     def ts(self, profileTuples, n, m):
         indicies = []
         while len(indicies) < len(profileTuples):
@@ -102,6 +113,8 @@ class GeneticAlgorithm:
             indicies += topNIndicies
         return indicies[0:len(profileTuples)]
 
+    #In group selection the population is split into two random groups and the aggregate
+    #fitness of each group is computed. The group with the highest fitness is doubles and returned
     def gr(self,profileTuples):
         g1 = []
         g2 = []
@@ -123,7 +136,8 @@ class GeneticAlgorithm:
             g2 = [i[0] for i in g2]
             return g2 + g2
 
-
+    #for a given breeding pool, solutions are recombined with neighboring solutions,
+    #to generate a new population of the same size.
     def breedNewPop(self,breedingPool):
         newPop = []
         for i in range(0,len(breedingPool)-1,2):
@@ -131,6 +145,10 @@ class GeneticAlgorithm:
             newPop += [newSols[0], newSols[1]]
         return newPop
 
+    #this method combines a solution A and B from the breeding pool using
+    #either 1 point cross or uniform cross based on terminal input paramters.
+    #If 1 point cross is selected then the 1c method is called with probability
+    #cross prob, otherwise the origonal solutions are returned
     def combine(self, solA, solB):
         if self.crossMethod == "1c":
             r = random.random()
@@ -142,12 +160,16 @@ class GeneticAlgorithm:
         else:
             return self.uniformCross(solA,solB)
 
+    #this method, given two solutions will switch the values that come after
+    #and before a random index i in solution A and B.
     def onePointCross(self, solA, solB):
         crossOverPoint = random.randrange(len(solA))
         newA = solA[0:crossOverPoint] + solB[crossOverPoint:len(solB)]
         newB = solB[0:crossOverPoint] + solA[crossOverPoint:len(solA)]
         return (newA, newB)
 
+    #this method implements a uniform cross scheme in which for a given index i of
+    #solution A and B it will switch the value of solA and solB with probability crossProb
     def uniformCross(self, solA, solB):
         newA = []
         newB = []
@@ -161,12 +183,16 @@ class GeneticAlgorithm:
                 newB += [solB[i]]
         return(newA,newB)
 
+    #this method iterates through all solutions in the population and runs a mutation
+    #algorithm on each solution.
     def mutatePop(self, pop):
         newPop = []
         for sol in pop:
             newPop += [self.mutateSolution(sol)]
         return newPop
 
+    #this method, given a solution, will iterate through all indicies and flip
+    #a 0 or 1 with probability mutProb.
     def mutateSolution(self,sol):
         newSol = []
         for i in sol:
@@ -180,18 +206,24 @@ class GeneticAlgorithm:
                 newSol += [i]
         return newSol
 
+    #This method will build a ranodm solution of 0's and 1's of length numVars
     def buildRandomSolution(self):
         sol = []
         for i in range(self.numVars+1):
             sol += [self.getIndexValue(.5)]
         return sol
 
+    #Given a percetnatge of a random value being true. This method will return
+    # a 1 with probability probTrue and a 0 with probability 1-probTrue
     def getIndexValue(self,probTrue):
         r = random.random()
         if r < probTrue:
             return 1
         else:
             return 0
+
+    #This method, given a populatino of solutions, will generate a tuple containing
+    #the index of the solution in the given population list, and then a fitness ranking.
     def buildProfileTuples(self, pop):
         fitnessRatings = [self.FA.evaluateSolution(i) for i in pop]
         profileTuples = []
